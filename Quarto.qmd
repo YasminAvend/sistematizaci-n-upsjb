@@ -1,0 +1,106 @@
+---
+title: "Semana_1"
+author: "Kristell"
+format: html
+editor: visual
+---
+
+```{r}
+1 + 1
+2 + 7
+```
+
+```{r}
+x <- 5
+x = 5
+```
+
+```{r}
+x
+```
+
+```{r}
+y = 5
+
+x + y
+```
+
+```{r}
+z <- c(3, 7, 2)
+z = c(3, 7, 2)
+```
+
+```{r}
+x = 5
+y = 5
+s = x + y
+a = summary(x + y)
+```
+
+```{r}
+#x = 5 
+x
+#z <- c(3, 7, 2)
+```
+
+```{r}
+a = 8
+b = 10
+
+resultado = a + b
+print (resultado)
+```
+
+```{r}
+class(a)
+class(b)
+```
+
+```{r}
+is.vector(a)
+```
+
+```{r}
+is.vector(z)
+```
+
+```{r}
+b = "hipertenso"
+c = "> 65 años"
+d = "este es un caracter"
+
+class(c)
+```
+
+```{r}
+e = c(4, 3, 7)
+```
+
+```{r}
+f = c("leve", "moderado", "grave")
+```
+
+```{r}
+g = c(6, "alto")
+```
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

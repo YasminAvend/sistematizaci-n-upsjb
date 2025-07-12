@@ -1,0 +1,250 @@
+---
+title: "PC2-1"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(rio)
+library(here)
+library(gridExtra) ## Para múltiple gráficos en una sola página
+library(GGally) ## Para gráficos de correlación
+library(forcats)
+```
+
+```{r}
+data_autism <- import(here("data", "autismo.csv"))
+```
+
+```{r}
+str(data_autism)
+```
+
+## Conversión de caracteres a factor (categóricos) usando la función `mutate_if()`
+
+```{r}
+data_autism_0 <- data_autism |> 
+  mutate_if(is.character, as.factor)
+str(data_autism)
+```
+
+# Visualizando distribución de datos
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Genero)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Etnicidad)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Ictericia_al_nacer)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Diagnostico_autismo)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Pais_residencia)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Uso_prev_aplicacion)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x =Quien_completa_prueba)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Diagnostico_ASD)) +
+  geom_bar()
+```
+
+# 2. Visualizando Datos Numéricos
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P1 )) +
+  geom_histogram() +
+  labs(y = "Porcentaje", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P2)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P3)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P4)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P4)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P5)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P6)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P7)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P8)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P9)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P10)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Resultado)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "Puntaje")
+```
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado)) +
+  geom_histogram(
+    color = "black", ## Color de las barras
+    fill = "green" ## Color de las barras
+    ) + 
+  labs(y = "Frecuencia", 
+       x = "puntaje")
+```
+
+# 3. Visualizando variables categóricas *versus* categóricas
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Diagnostico_autismo, fill = Genero)) +
+  geom_bar(position = "dodge") + ## Sin este argumento, las barras estarán una sobre otras
+  labs(y = "Frecuencia",  
+       x = "Diagnostico",
+       fill = "Genero")
+```
+
+# 4. Visualizando distribución de variables continuas *versus* categóricas
+
+```{r}
+data_autism_0|> 
+  filter(!is.na(Genero) & !is.na(Descripcion_edad)) |> 
+  group_by(Genero, Descripcion_edad) |> 
+  summarise(n = n(),
+            promedio = mean(Resultado, na.rm = T),
+            de = sd(Resultado, na.rm = T)) |> 
+  ggplot(aes(x = Resultado, y = promedio, fill = Diagnostico_ASD)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = promedio - de, ymax = promedio + de),
+                width = 0.5, size = 0.75, position = position_dodge(0.9)) +
+  labs(y = "Resultado", fill = "Descripcion_edad", x = "Genero")
+```
+
+# 5. Visualización para variables continuas versus continuas
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado, y = Resultado)) +
+  geom_point() +
+  labs(x = "Resultado", y = "Resultado")
+```
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado, y = Resultado)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(x = "Result", y = "Result")
+```
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado, y = Resultado)) +
+  geom_point() +
+  geom_smooth(stat = "smooth", se = TRUE) +
+  labs(x = "Resultado", y = "Resultado")
+```
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

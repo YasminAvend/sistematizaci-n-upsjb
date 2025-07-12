@@ -1,0 +1,572 @@
+---
+title: "Trabjo Final"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(rio)
+library(here)
+library(gridExtra) ## Para múltiple gráficos en una sola página
+library(GGally) ## Para gráficos de correlación
+library(forcats)
+```
+
+```{r}
+data_autism <- import(here("data", "autismo.csv"))
+```
+
+```{r}
+str(data_autism)
+```
+
+## Conversión de caracteres a factor (categóricos) usando la función `mutate_if()`
+
+```{r}
+data_autism_0 <- data_autism |> 
+  mutate_if(is.character, as.factor)
+str(data_autism)
+```
+
+# Visualizando distribución de datos
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Genero)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Etnicidad)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Ictericia_al_nacer)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Diagnostico_autismo)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Pais_residencia)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Uso_prev_aplicacion)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x =Quien_completa_prueba)) +
+  geom_bar()
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Diagnostico_ASD)) +
+  geom_bar()
+```
+
+# 2. Visualizando Datos Numéricos
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P1 )) +
+  geom_histogram() +
+  labs(y = "Porcentaje", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P2)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P3)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P4)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P4)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P5)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P6)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P7)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P8)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P9)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Puntuacion_P10)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "n")
+```
+
+```{r}
+data_autism_0|>  
+  ggplot(aes(x = Resultado)) +
+  geom_histogram() +
+  labs(y = "Frecuencia", x = "Puntaje")
+```
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado)) +
+  geom_histogram(
+    color = "black", ## Color de las barras
+    fill = "green" ## Color de las barras
+    ) + 
+  labs(y = "Frecuencia", 
+       x = "puntaje")
+```
+
+# 3. Visualizando variables categóricas *versus* categóricas
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Diagnostico_autismo, fill = Genero)) +
+  geom_bar(position = "dodge") + ## Sin este argumento, las barras estarán una sobre otras
+  labs(y = "Frecuencia",  
+       x = "Diagnostico",
+       fill = "Genero")
+```
+
+# 4. Visualizando distribución de variables continuas *versus* categóricas
+
+```{r}
+data_autism_0|> 
+  filter(!is.na(Genero) & !is.na(Descripcion_edad)) |> 
+  group_by(Genero, Descripcion_edad) |> 
+  summarise(n = n(),
+            promedio = mean(Resultado, na.rm = T),
+            de = sd(Resultado, na.rm = T)) |> 
+  ggplot(aes(x = Resultado, y = promedio, fill = Diagnostico_ASD)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = promedio - de, ymax = promedio + de),
+                width = 0.5, size = 0.75, position = position_dodge(0.9)) +
+  labs(y = "Resultado", fill = "Descripcion_edad", x = "Genero")
+```
+
+# 5. Visualización para variables continuas versus continuas
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado, y = Resultado)) +
+  geom_point() +
+  labs(x = "Resultado", y = "Resultado")
+```
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado, y = Resultado)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(x = "Result", y = "Result")
+```
+
+```{r}
+data_autism_0|> 
+  ggplot(aes(x = Resultado, y = Resultado)) +
+  geom_point() +
+  geom_smooth(stat = "smooth", se = TRUE) +
+  labs(x = "Resultado", y = "Resultado")
+```
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+# **Regresión Lineal Simple y prueba t de Student**
+
+```{r}
+install.packages("car")
+install.packages("cards")
+library(cards)
+library(gtsummary)
+library(car)
+```
+
+## Cargando los datos
+
+```{r}
+autismo <- import(here("data", "autismo.csv"))
+```
+
+## Sobre los datos para esta práctica
+
+```{r}
+# Cargar paquetes necesarios
+library(tidyverse)
+
+# Cargar los datos
+data <- read_csv("autismo.csv")
+
+# Re-nombrar objeto para claridad (opcional)
+autismo <- data
+
+# Codificar las variables como factores y definir referencia
+autismo <- autismo |> 
+  mutate(
+    Genero = relevel(as.factor(Genero), ref = "Masculino"),
+    Diagnostico_autismo = relevel(as.factor(Diagnostico_autismo), ref = "No")
+  )
+
+# Ajustar modelo de regresión logística
+modelo_logit <- glm(Diagnostico_autismo ~ Genero, 
+                    data = autismo, 
+                    family = binomial)
+
+# Ver resumen del modelo
+summary(modelo_logit)
+
+# Estimar OR (odds ratio)
+exp(coef(modelo_logit))
+
+# Intervalos de confianza del OR
+exp(confint(modelo_logit))
+```
+
+***RESULTADO MODELO PARA AUTISMO:***
+
+-   Variable dependiente: `Diagnostico_autismo` (`"si"` / `"no"`)
+
+<!-- -->
+
+-   Predictor: `Genero` (`"Masculino"` / `"Femenino"`)
+
+<!-- -->
+
+-   Método: **Regresión logística binaria**
+
+```{r}
+modelo_logit <- glm(Diagnostico_autismo ~ Genero, 
+                    data = autismo, 
+                    family = binomial)
+
+```
+
+```{r}
+# Estimar OR
+exp(coef(modelo_logit))
+
+# Intervalo de confianza del OR
+exp(confint(modelo_logit))
+
+```
+
+El OR para `GeneroFemenino` fue 1.56...
+
+**A continuación, usamos la función `glm()`, general linear model, con el argumento family = binomial para ajustar una regresión logística y `summary()` para ver los resultados.**
+
+```{r}
+# Odds Ratio
+exp(coef(modelo_logit))
+
+# Intervalo de confianza
+exp(confint(modelo_logit))
+
+```
+
+La regresión logística indicó que el **Odds Ratio (OR)** para el género femenino en relación con el diagnóstico de autismo fue de **1.56**, con un intervalo de confianza del **95% entre 0.80 y 2.95**. Este resultado sugiere que, en esta muestra, las niñas tienen una mayor probabilidad de ser diagnosticadas con autismo en comparación con los niños. Sin embargo, el valor de **p = 0.179** indica que esta asociación **no es estadísticamente significativa** (p \> 0.05).
+
+Por tanto, aunque hay una tendencia observada hacia una mayor frecuencia de diagnóstico en niñas, no se puede concluir con evidencia estadística suficiente que exista una asociación entre el género y el diagnóstico de autismo en esta muestra. Es recomendable continuar con el análisis incorporando más predictores para obtener una visión más amplia de los factores asociados al diagnóstico.
+
+# Bondad de ajuste
+
+```{r}
+library(rio)
+library(here)
+```
+
+```{r}
+autismo |>  
+  ggplot(aes(x = Resultado)) +
+  geom_histogram(
+    color = "white",
+    ) + 
+  labs(y = "Frecuencia", 
+       x = "resultados") +
+  geom_vline(xintercept = mean(autismo$Resultado, na.rm = TRUE),
+             color = "darkorange", size = 1.5)
+```
+
+```{r}
+mean(autismo$Resultado, na.rm = TRUE)
+```
+
+```{r}
+plot(Resultado ~ Edad , data = autismo,
+     col = "gray",
+     ylab = "resultado",
+     xlab = "edad",
+     las = 1,
+     pch = 20, 
+     font.lab = 2, font.axis = 2) 
+
+# La función lm() ajusta el modelo de regresión lineal
+abline(lm(Resultado ~ Edad , data = autismo), lwd = 2, col = "purple")
+```
+
+Para ver los resultados, usamos la función summary() y dentro, el objeto modelo_ejemplo.
+
+```{r}
+summary(autismo)
+```
+
+# Prueba t de Student para muestras independientes
+
+Imagina que, ahora, luego de haber tomado las mediciones de medidas de glucosa en ayunas (mg/dL) queremos saber si el promedio de glucosa en varones es significativamente diferente del promedio de glucosa en mujeres. Es esta situación, hay dos grupos (varones y mujeres) de muestras independientes.
+
+## 2.1 ¿Cuándo usar la prueba t de Student para muestras independientes?
+
+-   Cuando los dos grupos de muestras a comparar han sido muestreadas de una distribución normal. Aquí podemos usar la prueba de Shapiro-Wilk.
+
+-   Cuando las varianzas de los dos grupos son iguales. Esto puede ser evaluado con la prueba F.
+
+Usualmente, la hipótesis de la prueba t de Student son:
+
+-   Hipótesis nula (H₀): No hay diferencia entre las medias de los dos grupos. $$ H_0: \mu_1 = \mu_2 $$
+-   Hipótesis alternativa (H₁): Hay una diferencia entre las medias de los dos grupos. $$ H_1: \mu_1 \neq \mu_2 $$
+
+## 2.2 Sobre los datos para esta práctica
+
+El dataset circun_glucosa, de 1000 personas adultas (\>=20 años de edad), contiene datos circunferencia de cintura (en centímetros), la variable sexo y otros datos demográficos.
+
+## 2.3 Resumen y visualización
+
+Resumen
+
+Antes de realizar la prueba t de Student es importante conocer la distribución de los datos e identificar si hay valores perdidos o atípicos. Empecemos por el resumen:\
+
+```{r}
+group_by(autismo, Genero) |> 
+  summarise(
+    count = n(),
+    mean = mean(Resultado, na.rm = TRUE),
+    sd = sd(Resultado, na.rm = TRUE)
+  )
+```
+
+Visualización
+
+```{r}
+autismo |>  
+  filter(!is.na(Genero)& !is.na(Resultado))  |> 
+  ggplot(aes(y = Resultado, x = Genero)) +
+  geom_boxplot() +
+  labs(y = "Resultado", x = "Sexo")
+```
+
+##  Pruebas preliminares para evaluar los supuestos de la prueba t de Student
+
+Supuesto 1: los datos deben haber sido muestreados de una distribución normal.
+
+Para esto, usamos la prueba de Shapiro-wilk.
+
+```{r}
+autismo |> 
+  filter(Genero == "Masculino") |> 
+  summarise(shapiro = list(shapiro.test(Resultado))) |> 
+  pull(shapiro)
+```
+
+```{r}
+autismo |> 
+  filter(Genero == "Femenino") |> 
+  summarise(shapiro = list(shapiro.test(Resultado))) |> 
+  pull(shapiro)
+```
+
+Supuesto 2: Las varianzas de los dos grupos son iguales Para esto podemos usar la prueba F para evaluar la homogeneidad de varianzas. Esto esta implementado en la función var.test()
+
+```{r}
+var.test(Resultado ~ Genero, data = autismo)
+```
+
+El valor p de la prueba F es p = 0.3143. Es mayor que el nivel de significancia α = 0.05. En conclusión, no hay una diferencia significativa entre las varianzas de los dos conjuntos (femenino y masculino) de datos. Por lo tanto, podemos usar la prueba t clásica que asume igualdad de varianzas.
+
+## Realizamos la prueba t para nuestros datos.
+
+```{r}
+t.test(Resultado ~ Genero, data = autismo, var.equal = TRUE)
+```
+
+**Interpretando los resultados**
+
+```{r}
+t.test(Resultado ~ Genero, data = autismo, var.equal = TRUE)
+```
+
+El valor p de la prueba es 0.003615, lo cual es menor que el nivel de significancia α = 0.05. Por lo tanto, podemos concluir que la circunferencia promedio del brazo en hombres es significativamente diferente de la circunferencia promedio en mujeres.
+
+# Análisis de Varianza (ANOVA)
+
+El análisis de varianza (ANOVA), especificamente el ANOVA de una vía, es una extensión de la prueba t para muestras independientes cuando se comparan medias entre más de dos grupos. En el ANOVA de una vía, los datos se organizan en varios grupos basados en una única variable de agrupación (también llamada variable de factor). En este ejecicio, evaluamos si el peso corporal (kg) es significativamente distinto segun estado de tabaquismo.
+
+##  ¿Cuándo usar el ANOVA de una vía?
+
+-   Las observaciones se obtienen de forma independiente y aleatoria de la población definida por los niveles del factor.
+
+-   Los datos de cada nivel del factor se distribuyen normalmente.
+
+-   Hipótesis nula (H₀): No hay diferencia entre las medias de los dos grupos.
+
+-   Estas poblaciones normales tienen una varianza común. (Se puede usar la prueba de Levene para verificar esto.)
+
+##  Sobre los datos para esta práctica
+
+El dataset circun_glucosa, de 1000 personas adultas (\>=20 años de edad), contiene datos de peso corpotal (kg), la variable tabaquismo y otros datos demográficos.
+
+## Resumen y visualización
+
+Resumen
+
+Antes de realizar la prueba de ANOVA es importante conocer la distribución de los datos e identificar si hay atípicos. Empecemos por el resumen:
+
+```{r}
+group_by(autismo, Etnicidad) |> 
+  summarise(
+    count = n(),
+    mean = mean(Etnicidad, na.rm = TRUE),
+    sd = sd(Etnicidad, na.rm = TRUE),
+    min = min(Etnicidad, na.rm = TRUE),
+    max = max(Etnicidad, na.rm = TRUE)
+  )
+```
+
+Visualizacion
+
+```{r}
+autismo |>  
+  filter(!is.na(Etnicidad)& !is.na(Resultado))  |> 
+  ggplot(aes(y = Resultado, x = Etnicidad)) +
+  geom_boxplot() +
+  labs(y = "RESULTADO", x = "ORIGEN")
+```
+
+## Pruebas preliminares para evaluar los supuestos del ANOVA
+
+```{r}
+autismo <- autismo |>
+    mutate(Etnicidad = as.factor(Etnicidad))
+```
+
+Supuesto 1v: los datos deben haber sido muestreados de una distribución normal.
+
+Para esto, usamos la prueba de Shapiro-wilk.
+
+```{r}
+autismo |> 
+  filter(Etnicidad == "Otros") |> 
+  summarise(shapiro = list(shapiro.test(Resultado))) |> 
+  pull(shapiro)
+```
+
+```{r}
+autismo |> 
+  filter(Etnicidad == "Oriente Medio") |> 
+  summarise(shapiro = list(shapiro.test(Resultado))) |> 
+  pull(shapiro)
+
+```
+
+```{r}
+autismo |> 
+  filter(Etnicidad == "Latino") |> 
+  summarise(shapiro = list(shapiro.test(Resultado))) |> 
+  pull(shapiro)
+
+```
+
+```{r}
+leveneTest(Resultado ~ Etnicidad, data = autismo)
+```
+
+##  Realizamos la prueba de ANOVA de una vía para nuestros datos.
+
+```{r}
+res_anova = aov(Resultado ~ Etnicidad, data = autismo)
+```
+
+```{r}
+summary(res_anova)
+```
+
+**Interpretando los resultados**
+
+Dado que el valor p es mayor que el nivel de significancia 0.05, podemos concluir que no existen diferencias significativas entre los grupos.
+
+Aunque para este ejecicio no hemos encontrado una diferencia estadísticamente significativa, cuando sí lo hay, es importante realizar una prueba de comparación por pares para saber dónde se encuentra la diferencia. Para esto, se puede utilizar la prueba Tukey HSD (Tukey Honest Significant Differences)
